@@ -178,8 +178,13 @@ func (f *inFlow) onData(n uint32) error {
 	if f.pendingData+f.pendingUpdate > f.limit+f.delta {
 		limit := f.limit
 		rcvd := f.pendingData + f.pendingUpdate
+		pendingData := f.pendingData
+		pendingUpdate := f.pendingUpdate
+		delta := f.delta
 		f.mu.Unlock()
-		return fmt.Errorf("received %d-bytes data exceeding the limit %d bytes", rcvd, limit)
+		return fmt.Errorf("received %d-bytes data exceeding the limit %d bytes "+
+			"(n=%d, pendingData=%d, pendingUpdate=%d, delta=%d)", rcvd, limit,
+			n, pendingData, pendingUpdate, delta)
 	}
 	f.mu.Unlock()
 	return nil
