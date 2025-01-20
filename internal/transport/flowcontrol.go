@@ -23,6 +23,8 @@ import (
 	"math"
 	"sync"
 	"sync/atomic"
+
+	"google.golang.org/grpc/debug"
 )
 
 // writeQuota is a soft limit on the amount of data a stream can
@@ -181,6 +183,7 @@ func (f *inFlow) onData(n uint32) error {
 		pendingUpdate := f.pendingUpdate
 		delta := f.delta
 		f.mu.Unlock()
+		debug.HandleError(rcvd, limit, n, pendingData, pendingUpdate, delta)
 		return fmt.Errorf("received %d-bytes data exceeding the limit %d bytes "+
 			"(n=%d, pendingData=%d, pendingUpdate=%d, delta=%d)", rcvd, limit,
 			n, pendingData, pendingUpdate, delta)
