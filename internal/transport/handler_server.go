@@ -37,6 +37,7 @@ import (
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/debug"
 	"google.golang.org/grpc/internal/grpclog"
 	"google.golang.org/grpc/internal/grpcutil"
 	"google.golang.org/grpc/mem"
@@ -496,6 +497,11 @@ func (ht *serverHandlerTransport) Drain(string) {
 //   - an error from the status package
 func mapRecvMsgError(err error) error {
 	if err == io.EOF || err == io.ErrUnexpectedEOF {
+		if err == io.EOF {
+			debug.Log("got io.EOF at handler_server.go:498")
+		} else if err == io.ErrUnexpectedEOF {
+			debug.Log("got io.ErrUnexpectedEOF at handler_server.go:498")
+		}
 		return err
 	}
 	if se, ok := err.(http2.StreamError); ok {

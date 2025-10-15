@@ -33,6 +33,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/debug"
 	"google.golang.org/grpc/internal/channelz"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/mem"
@@ -371,6 +372,7 @@ func (s *Stream) ReadMessageHeader(header []byte) (err error) {
 		if err != nil {
 			if n > 0 && err == io.EOF {
 				err = io.ErrUnexpectedEOF
+				debug.Log("converted io.EOF to io.ErrUnexpectedEOF at transport.go:374")
 			}
 			return err
 		}
@@ -398,6 +400,7 @@ func (s *Stream) read(n int) (data mem.BufferSlice, err error) {
 		if err != nil {
 			if bufLen > 0 && err == io.EOF {
 				err = io.ErrUnexpectedEOF
+				debug.Log("converted io.EOF to io.ErrUnexpectedEOF at transport.go:403")
 			}
 			data.Free()
 			return nil, err

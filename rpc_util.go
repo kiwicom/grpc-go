@@ -31,6 +31,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/debug"
 	"google.golang.org/grpc/encoding"
 	"google.golang.org/grpc/encoding/proto"
 	"google.golang.org/grpc/internal/transport"
@@ -717,6 +718,7 @@ func (p *parser) recvMsg(maxReceiveMessageSize int) (payloadFormat, mem.BufferSl
 	data, err := p.r.Read(int(length))
 	if err != nil {
 		if err == io.EOF {
+			debug.Log("got ErrUnexpectedEOF at rpc_util.go:720")
 			err = io.ErrUnexpectedEOF
 		}
 		return 0, nil, err
@@ -1030,6 +1032,7 @@ func toRPCErr(err error) error {
 	case context.Canceled:
 		return errContextCanceled
 	case io.ErrUnexpectedEOF:
+		debug.Log("converted ErrUnexpectedEOF to status at rpc_util.go:1038")
 		return status.Error(codes.Internal, err.Error())
 	}
 

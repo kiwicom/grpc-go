@@ -37,6 +37,7 @@ import (
 	"golang.org/x/net/http2/hpack"
 	"google.golang.org/protobuf/proto"
 
+	"google.golang.org/grpc/debug"
 	"google.golang.org/grpc/internal"
 	"google.golang.org/grpc/internal/grpclog"
 	"google.golang.org/grpc/internal/grpcutil"
@@ -325,6 +326,12 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 
 	frame, err := t.framer.fr.ReadFrame()
 	if err == io.EOF || err == io.ErrUnexpectedEOF {
+		switch err {
+		case io.EOF:
+			debug.Log("got io.EOF at http2_server.go:327")
+		case io.ErrUnexpectedEOF:
+			debug.Log("got io.ErrUnexpectedEOF at http2_server.go:327")
+		}
 		return nil, err
 	}
 	if err != nil {

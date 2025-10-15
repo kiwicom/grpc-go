@@ -23,3 +23,21 @@ func HandleError(rcvd, limit, n, pendingData, pendingUpdate, delta uint32) {
 		h.fn(rcvd, limit, n, pendingData, pendingUpdate, delta)
 	}
 }
+
+type LogHandler func(msg string)
+
+type logHandler struct {
+	fn LogHandler
+}
+
+var globalLogHandler atomic.Pointer[logHandler]
+
+func SetLogHandler(fn LogHandler) {
+	globalLogHandler.Store(&logHandler{fn: fn})
+}
+
+func Log(msg string) {
+	if h := globalLogHandler.Load(); h != nil && h.fn != nil {
+		h.fn(msg)
+	}
+}

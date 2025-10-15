@@ -30,6 +30,7 @@ import (
 
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/debug"
 	"google.golang.org/grpc/encoding"
 	"google.golang.org/grpc/internal"
 	"google.golang.org/grpc/internal/balancerload"
@@ -1803,6 +1804,7 @@ func (ss *serverStream) RecvMsg(m any) (err error) {
 			return err
 		}
 		if err == io.ErrUnexpectedEOF {
+			debug.Log("converted ErrUnexpectedEOF to status at stream.go:1806")
 			err = status.Error(codes.Internal, io.ErrUnexpectedEOF.Error())
 		}
 		return toRPCErr(err)
